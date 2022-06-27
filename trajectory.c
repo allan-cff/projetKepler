@@ -16,7 +16,7 @@ bool isTrajEmpty(struct traj* traj){
 }
 
 
-struct point* seeLastPoint(struct traj* traj){
+struct point* seeLastPointTraj(struct traj* traj){
     if(isTrajEmpty(traj)){
        return NULL;
     }
@@ -24,7 +24,7 @@ struct point* seeLastPoint(struct traj* traj){
 }
 
 
-void addPoint(struct traj* traj, struct point* p){
+void addPointTraj(struct traj* traj, struct point* p){
     if(isTrajEmpty(traj)){
         return;
     }
@@ -32,13 +32,21 @@ void addPoint(struct traj* traj, struct point* p){
 }
 
 
-struct point* readFirstPoint(struct traj* traj){
+struct point* readFirstPointTraj(struct traj* traj){
     if(isTrajEmpty(traj)){
         return NULL;
     }
     struct point* result = getFirst(traj->pointList);
     deleteFirst(traj->pointList);
     return result;
+}
+
+
+int trajLen(struct traj* t){
+    if(isTrajEmpty(t)){
+        return -1;
+    }
+    return listSize(t->pointList);
 }
 
 
@@ -62,26 +70,26 @@ void trajTest(){
     if(isTrajEmpty(newTraj)){
         error("is traj empty should return false with freshly created traj");
     }
-    addPoint(newTraj, NULL); // should add nothing : check with debugger
-    if(seeLastPoint(NULL) != NULL){
+    addPointTraj(newTraj, NULL); // should add nothing : check with debugger
+    if(seeLastPointTraj(NULL) != NULL){
         error("see last point should return null for null pointer");
     }
-    if(seeLastPoint(newTraj) != NULL){
+    if(seeLastPointTraj(newTraj) != NULL){
         error("see last point should return null for empty traj");
     }
-    if(readFirstPoint(NULL) != NULL){
+    if(readFirstPointTraj(NULL) != NULL){
         error("read first point should return null for null pointer");
     }
-    if(readFirstPoint(newTraj) != NULL){
+    if(readFirstPointTraj(newTraj) != NULL){
         error("read first point should return null for empty traj");
     }
     struct point* p1 = createEmptyPoint();
-    addPoint(NULL, p1); // should add nothing : check with debugger
-    addPoint(newTraj, p1);
-    if(seeLastPoint(newTraj) != p1){
+    addPointTraj(NULL, p1); // should add nothing : check with debugger
+    addPointTraj(newTraj, p1);
+    if(seeLastPointTraj(newTraj) != p1){
         error("see last point bad return for NON empty traj");
     }
-    if(readFirstPoint(newTraj) != p1){
+    if(readFirstPointTraj(newTraj) != p1){
         error("read first point bad return for NON empty traj");
     }
     deleteTraj(&newTraj);
@@ -89,9 +97,9 @@ void trajTest(){
     struct traj* traj2 = createEmptyTraj();
     struct point* p2 = createEmptyPoint();
     struct point* p3 = createEmptyPoint();
-    addPoint(traj2, p2);
-    addPoint(traj2, p3);
-    if(seeLastPoint(traj2) != p3){
+    addPointTraj(traj2, p2);
+    addPointTraj(traj2, p3);
+    if(seeLastPointTraj(traj2) != p3){
         error("see last point bad return for NON empty traj");
     }
     deleteTraj(&traj2); //should clean everything -> check with valgrind

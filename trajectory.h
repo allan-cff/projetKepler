@@ -17,9 +17,10 @@ struct traj {
 
 bool isTrajEmpty(struct traj*);
 struct traj* createEmptyTraj();             // create a new trajectory instance
-struct point* seeLastPoint(struct traj*);   // see last point but don't delete it
-void addPoint(struct traj*, struct point*); // add a point at last position
-struct point* readFirstPoint(struct traj*); // returns first point AND delete it
+struct point* seeLastPointTraj(struct traj*);   // see last point but don't delete it
+void addPointTraj(struct traj*, struct point*); // add a point at last position
+struct point* readFirstPointTraj(struct traj*); // returns first point AND delete it
+int trajLen(struct traj*);
 void deleteTraj(struct traj**);             // delete instance and all contained points
 void trajTest();
 

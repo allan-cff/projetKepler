@@ -17,6 +17,7 @@ struct vector {
 };
 
 struct vector* createEmptyVect();
+struct vector* createVect(double x, double y, double z);
 bool isVectorEmpty(struct vector*);
 double getX(struct vector*);
 double getY(struct vector*);
@@ -26,7 +27,7 @@ void setY(struct vector*, double);
 void setZ(struct vector*, double);
 struct vector* vectAddition(struct vector*, struct vector*);
 struct vector* vectSubstraction(struct vector*, struct vector*);
-void vectMultiplication(struct vector*, int);
+struct vector* vectMultiplication(struct vector*, double);
 double norm(struct vector*);
 void deleteVect(struct vector**);
 void vectorTest();

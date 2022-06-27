@@ -12,6 +12,16 @@ struct point* createEmptyPoint(){
     return newPoint;
 }
 
+
+struct point* createPoint(struct vector* pos, struct vector* speed, int time){
+    struct point* newPoint = createEmptyPoint();
+    setPos(newPoint, pos);
+    setSpeed(newPoint, speed);
+    setTime(newPoint, time);
+    return newPoint;
+}
+
+
 bool isPointEmpty(struct point* p){
     return p == NULL;
 }

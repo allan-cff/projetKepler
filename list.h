@@ -22,6 +22,7 @@ void addFirst(struct List*, struct point*);
 void addLast(struct List*, struct point*);
 struct point* getFirst(struct List*);
 struct point* getLast(struct List*);
+int listSize(struct List*);
 void deleteFirst(struct List*);
 void deleteLast(struct List*);
 void deleteList(struct List**);

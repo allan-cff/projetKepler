@@ -95,6 +95,14 @@ void deleteLast(struct List* l) {
 }
 
 
+int listSize(struct List* l){
+    if(isListEmpty(l)){
+        return -1;
+    }
+    return l->size;
+}
+
+
 void deleteList(struct List** l) {
     if(l == NULL){
         return;

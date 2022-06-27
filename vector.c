@@ -13,6 +13,16 @@ struct vector* createEmptyVect(){
     return newVector;
 }
 
+
+struct vector* createVect(double x, double y, double z){
+    struct vector* newVector = createEmptyVect();
+    setX(newVector, x);
+    setY(newVector, y);
+    setZ(newVector, z);
+    return newVector;
+}
+
+
 bool isVectorEmpty(struct vector* v){
     return v == NULL;
 }
@@ -81,13 +91,15 @@ struct vector* vectSubstraction(struct vector* v1, struct vector* v2) {
     return newVect;
 }
 
-void vectMultiplication(struct vector* v, int x){
+struct vector* vectMultiplication(struct vector* v, double x){
     if(isVectorEmpty(v)){
         return;
     }
-    setX(v, getX(v) * x);
-    setY(v, getY(v) * x);
-    setZ(v, getZ(v) * x);
+    struct vector *newVect = createEmptyVect();
+    setX(newVect, getX(v) * x);
+    setY(newVect, getY(v) * x);
+    setZ(newVect, getZ(v) * x);
+    return newVect;
 }
 
 double norm(struct vector* v){

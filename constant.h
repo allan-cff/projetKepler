@@ -1,0 +1,6 @@
+#ifndef PROGRAMM_CONSTANT_H
+#define PROGRAMM_CONSTANT_H
+
+#define GRAVITATIONAL_CONSTANT 6.67430*pow(10, -11)
+
+#endif

@@ -18,6 +18,7 @@ struct point {
 };
 
 struct point* createEmptyPoint();
+struct point* createPoint(struct vector* pos, struct vector* speed, int time);
 bool isPointEmpty(struct point*);
 struct vector* getPos(struct point*);
 struct vector* getSpeed(struct point*);
