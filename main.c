@@ -2,11 +2,11 @@
 
 #ifndef ERROR_FUNCTION
 #define ERROR_FUNCTION
-void error(char* message){
+/*void error(char* message){
     printf("***** ERROR VECTOR : ");
     printf("%s", message);
     printf(" *****\n");
-}
+}*/
 #endif
 
 
@@ -17,6 +17,61 @@ int main() {
     trajTest();
     objectTest();*/
 
+    FILE* fp;
+    fp = fopen("./../../panel/systemsList.json", "r");
+    if(fp==NULL){
+        printf("Error in opening file");
+        return 1;
+    }
+    char systemsList[MAX_SYSTEMS_NUMBER][MAX_SYSTEM_NAME_LEN];
+    char currentCharacter;
+    unsigned int j = 0;
+    unsigned int k = 0;
+    while(!feof(fp)){
+        currentCharacter=fgetc(fp);
+        if(currentCharacter >= 'a' && currentCharacter <= 'z' || currentCharacter >= 'A' && currentCharacter <= 'Z' || currentCharacter == ','){
+            if(currentCharacter == ',' || k == MAX_SYSTEM_NAME_LEN){
+                j++;
+                k=0;
+            } else {
+                systemsList[j][k] = currentCharacter;
+                k++;
+            }
+        }
+        if(j == MAX_SYSTEMS_NUMBER){
+            break;
+        }
+    }
+    fclose(fp);
+
+    int selection;
+    do {
+        printf("\nMenu principal :\nChoix du système à générer : \n");
+        printf("0-Générer tous\n");
+        for (unsigned int i = 0; i < (j + 1); i++) {
+            printf("%d-%s\n", i + 1, systemsList[i]);
+        }
+        printf("Votre choix :");
+        scanf("%d", &selection);
+    }
+    while(selection<0 || selection>j);
+
+    FILE* fp2;
+    fp2 = fopen("./../../panel/systemsList.json", "r");
+    if(fp2==NULL){
+        printf("Error in opening file");
+        return 1;
+    }
+
+    while(!feof(fp)) {
+        currentCharacter = fgetc(fp);
+        if (currentCharacter >= 'a' && currentCharacter <= 'z' || currentCharacter >= 'A' && currentCharacter <= 'Z' ||
+            currentCharacter == ',') {
+
+        }
+    }
+
+    /*
     struct object* Soleil = initialize(1.988e30, 0, NULL);
     setName(Soleil, "Soleil");
     struct object* Mercure = initialize(3.3011e23, 46001200000, Soleil);
@@ -82,12 +137,13 @@ int main() {
     fclose(p1);
     deleteObject(&Soleil);
     deleteObject(&Terre);
-    deleteObject(&Terre);
+    deleteObject(&TerreA);
     deleteObject(&Mercure);
     deleteObject(&MercureA);
     deleteObject(&Venus);
     deleteObject(&VenusA);
     deleteObject(&Mars);
     deleteObject(&MarsA);
+    */
     return 0;
 }
