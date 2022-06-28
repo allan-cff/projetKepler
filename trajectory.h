@@ -21,6 +21,7 @@ struct point* seeLastPointTraj(struct traj*);   // see last point but don't dele
 void addPointTraj(struct traj*, struct point*); // add a point at last position
 struct point* readFirstPointTraj(struct traj*); // returns first point AND delete it
 int trajLen(struct traj*);
+void deleteTrajFirst(struct traj*);
 void deleteTraj(struct traj**);             // delete instance and all contained points
 void trajTest();
 

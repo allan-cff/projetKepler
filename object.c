@@ -133,33 +133,86 @@ void setFirstPoint(struct object* obj, double equatorial_radius, double eccentri
 
 
 void addPoint(struct object* obj, struct point* p){
-    addPointTraj(obj->traj, p);
+    addPointTraj(getTraj(obj), p);
 }
 
 void addFromVect(struct object* obj, struct vector* pos, struct vector* speed){
-    struct point* newPoint = createPoint(pos, speed, trajLen(obj->traj));
+    struct point* newPoint = createPoint(pos, speed, trajLen(getTraj(obj)));
     addPoint(obj, newPoint);
 }
 
 
 void processEulerNextPoint(struct object* obj, double deltaTime){
-    struct point* prevPoint = seeLastPointTraj(obj->traj);
+    struct point* prevPoint = seeLastPointTraj(getTraj(obj));
     struct vector* prevPos = getPos(prevPoint);
     struct vector* prevSpeed = getSpeed(prevPoint);
-    struct vector* nextPos = createEmptyVect();
     struct vector* distance = vectMultiplication(prevSpeed, deltaTime);
-    nextPos = vectAddition(prevPos, distance);
-    struct vector* pointToCenter = createEmptyVect();
-    pointToCenter = vectSubstraction(parentPos(obj), prevPos);
-    struct vector* acceleration = vectMultiplication(pointToCenter, -GRAVITATIONAL_CONSTANT*parentMass(obj)/pow(norm(pointToCenter), 3));
-    struct vector* nextSpeed = createEmptyVect();
+    struct vector* nextPos = vectAddition(prevPos, distance);
+    struct vector* pointToCenter = vectSubstraction(parentPos(obj), prevPos);
+    struct vector* acceleration = vectMultiplication(pointToCenter,GRAVITATIONAL_CONSTANT*parentMass(obj)/pow(norm(pointToCenter), 3));
     struct vector* deltaSpeed = vectMultiplication(acceleration, deltaTime);
-    nextSpeed = vectAddition(prevSpeed, deltaSpeed);
+    struct vector* nextSpeed = vectAddition(prevSpeed, deltaSpeed);
     deleteVect(&distance);
     deleteVect(&pointToCenter);
     deleteVect(&deltaSpeed);
     deleteVect(&acceleration);
     addFromVect(obj, nextPos, nextSpeed);
+}
+
+
+void processAsymEulerNextPoint(struct object* obj, double deltaTime){
+    struct point* prevPoint = seeLastPointTraj(getTraj(obj));
+    struct vector* prevPos = getPos(prevPoint);
+    struct vector* prevSpeed = getSpeed(prevPoint);
+    struct vector* distance = vectMultiplication(prevSpeed, deltaTime);
+    struct vector* nextPos = vectAddition(prevPos, distance);
+    struct vector* pointToCenter = vectSubstraction(parentPos(obj), nextPos);
+    struct vector* acceleration = vectMultiplication(pointToCenter,GRAVITATIONAL_CONSTANT*parentMass(obj)/pow(norm(pointToCenter), 3));
+    struct vector* deltaSpeed = vectMultiplication(acceleration, deltaTime);
+    struct vector* nextSpeed = vectAddition(prevSpeed, deltaSpeed);
+    deleteVect(&distance);
+    deleteVect(&pointToCenter);
+    deleteVect(&deltaSpeed);
+    deleteVect(&acceleration);
+    addFromVect(obj, nextPos, nextSpeed);
+}
+
+
+void readAllPoints(struct object* obj){
+    if(isObjectEmpty(obj) || isTrajEmpty(getTraj(obj))){
+        return;
+    }
+    char* name = getName((obj));
+    printf("{\"%s\": [", name);
+    while(trajLen(getTraj(obj))>0){
+        struct point* p = readFirstPointTraj(getTraj(obj));
+        printf("[[%e, %e, %e],\n", getX(getPos(p)), getY(getPos(p)), getZ(getPos(p)));
+        printf("[%e, %e, %e],\n", getX(getSpeed(p)), getY(getSpeed(p)), getZ(getSpeed(p)));
+        printf("%d],\n", getTime(p));
+        deleteTrajFirst(getTraj(obj));
+    }
+    printf("]");
+}
+
+
+void addToFile(FILE* p1, struct object* obj) {
+    if (isObjectEmpty(obj) || isTrajEmpty(getTraj(obj))) {
+        return;
+    }
+
+    fprintf(p1, "\"%s\": [", getName(obj));
+    while (trajLen(getTraj(obj)) > 1) {
+        struct point* p = readFirstPointTraj(getTraj(obj));
+        fprintf(p1, "[[%e, %e, %e],", getX(getPos(p)), getY(getPos(p)), getZ(getPos(p)));
+        fprintf(p1, "[%e, %e, %e],", getX(getSpeed(p)), getY(getSpeed(p)), getZ(getSpeed(p)));
+        fprintf(p1, "%d],\n", getTime(p));
+        deleteTrajFirst(getTraj(obj));
+    }
+    struct point* p = readFirstPointTraj(getTraj(obj));
+    fprintf(p1, "[[%e, %e, %e],", getX(getPos(p)), getY(getPos(p)), getZ(getPos(p)));
+    fprintf(p1, "[%e, %e, %e],", getX(getSpeed(p)), getY(getSpeed(p)), getZ(getSpeed(p)));
+    fprintf(p1, "%d]]\n", getTime(p));
+    deleteTrajFirst(getTraj(obj));
 }
 
 
@@ -170,7 +223,8 @@ void deleteObject(struct object** obj){
     if(isObjectEmpty(*obj)){
         return;
     }
-    deleteTraj(&((*obj)->traj));
+    struct traj* objTraj = getTraj(*obj);
+    deleteTraj(&objTraj);
     free(*obj);
     *obj = NULL;
 }
@@ -181,8 +235,41 @@ void objectTest() {
         error("is object empty should return true with null pointer");
     }
     struct object* newObject = createEmptyObject();
+    struct object* parentObject = createEmptyObject();
+    setName(newObject, "test");
+    setMass(newObject, 10000);
+    setPeri(newObject, 23.98765);
+    setParent(newObject, parentObject);
+    setMass(parentObject, 999);
     if(isObjectEmpty(newObject)){
         error("is object empty should return false with freshly created object");
     }
-
+    if(getTraj(newObject)!=newObject->traj){
+        error("get Traj should return object traj");
+    }
+    if(getMass(newObject)!=newObject->mass){
+        error("getMass should return object mass");
+    }
+    if(getPeri(newObject)!=newObject->perihelion){
+        error("getPeri should return object perihelion");
+    }
+    if(getName(newObject)!=newObject->name){
+        error("getName should return object name");
+    }
+    if(getParent(newObject)!=newObject->parent){
+        error("getParent should return object parent");
+    }
+    struct point* newPoint = createPoint(createEmptyVect(), createEmptyVect(), 0);
+    addPoint(parentObject, newPoint);
+    if(parentPos(newObject)!=getPos(newPoint)){
+        error("parent pos should return parent last point pos");
+    }
+    if(parentSpeed(newObject)!=getSpeed(newPoint)){
+        error("parent speed should return last point speed");
+    }
+    if(parentMass(newObject)!=parentObject->mass){
+        error("parent mass invalid return");
+    }
+    deleteObject(&newObject);
+    deleteObject(&parentObject);
 }

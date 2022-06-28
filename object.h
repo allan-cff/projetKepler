@@ -35,10 +35,13 @@ void setMass(struct object*, double);
 void setPeri(struct object*, double);
 void setName(struct object*, char*);
 void setParent(struct object* obj, struct object* parent);
-struct object* initialize(double parent_mass, double perihelion, struct object* parent);
+struct object* initialize(double mass, double perihelion, struct object* parent);
 void setFirstPoint(struct object*, double equatorial_radius, double eccentricity);
 void addPoint(struct object*, struct point*);
 void processEulerNextPoint(struct object* obj, double deltaTime);
+void processAsymEulerNextPoint(struct object* obj, double deltaTime);
+void readAllPoints(struct object*);
+void addToFile(FILE*, struct object*);
 void deleteObject(struct object**);
 void objectTest();
 

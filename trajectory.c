@@ -36,9 +36,7 @@ struct point* readFirstPointTraj(struct traj* traj){
     if(isTrajEmpty(traj)){
         return NULL;
     }
-    struct point* result = getFirst(traj->pointList);
-    deleteFirst(traj->pointList);
-    return result;
+    return getFirst(traj->pointList);
 }
 
 
@@ -47,6 +45,14 @@ int trajLen(struct traj* t){
         return -1;
     }
     return listSize(t->pointList);
+}
+
+
+void deleteTrajFirst(struct traj* traj){
+    if(isTrajEmpty(traj)){
+       return;
+    }
+    deleteFirst(traj->pointList);
 }
 
 
