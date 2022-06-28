@@ -47,13 +47,13 @@ int main() {
     setFirstPoint(MarsA, 227944000000, 0.09339);
     for(unsigned i = 0; i < 40000; i++){
         processEulerNextPoint(Mercure, 8640);
-        processEulerNextPoint(MercureA, 8640);
+        processAsymEulerNextPoint(MercureA, 8640);
         processEulerNextPoint(Venus, 8640);
-        processEulerNextPoint(VenusA, 8640);
+        processAsymEulerNextPoint(VenusA, 8640);
         processEulerNextPoint(Terre, 8640);
-        processEulerNextPoint(TerreA, 8640);
+        processAsymEulerNextPoint(TerreA, 8640);
         processEulerNextPoint(Mars, 8640);
-        processEulerNextPoint(MarsA, 8640);
+        processAsymEulerNextPoint(MarsA, 8640);
     }
 
     FILE *p1;
