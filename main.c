@@ -1,5 +1,4 @@
 #include "object.h"
-#include "json.h"
 
 #ifndef ERROR_FUNCTION
 #define ERROR_FUNCTION
@@ -18,7 +17,7 @@ int main() {
     trajTest();
     objectTest();*/
 
-    FILE *fp1 = fopen("./../../panel/systemsList.json", "r");
+/*    FILE *fp1 = fopen("./../../panel/systemsList.json", "r");  // running with Valgrind errors
     if (fp1 == NULL) {
         printf("Error in opening file");
         return 1;
@@ -53,7 +52,7 @@ int main() {
         }
         printf("Votre choix :");
         scanf("%d", &selection);
-    } while (selection < 1 || selection > j);
+    } while (selection < 1 || selection > j+1);
 
 
     char* directory = malloc(32*sizeof(char));
@@ -64,6 +63,8 @@ int main() {
         printf("\n\nOuverture du fichier : %s", directory);
     }
     free(directory);
+*/
+
 
     /*FILE *fp2;
     fp2 = fopen("./../../panel/systems/solarSystem/config.json", "r");
@@ -73,16 +74,18 @@ int main() {
     }*/
 
 
-
+// Not implemented yet
     /*char currentWord[32];
     currentCharacter = '\n';
     goTo(fp2, '{');
     readSysteme(fp2, 0);
     */
 
-    printf("\n\nEntrer le nombre de points à calculer : ");
-    int numberOfPoints;
-    scanf("%d", &numberOfPoints);
+
+// Malloc error
+    //printf("\n\nEntrer le nombre de points à calculer : ");
+    //int numberOfPoints;
+    //scanf("%d", &numberOfPoints);
 
     printf("\nGénération de la trajectoire");
     struct object *Soleil = initialize(1.988e30, 0, NULL);
@@ -121,7 +124,7 @@ int main() {
     processMecEnergy(TerreA);
     processMecEnergy(Mars);
     processMecEnergy(MarsA);
-    for (unsigned i = 0; i < numberOfPoints; i++) {
+    for (unsigned i = 0; i < 60000; i++) {
         processEulerNextPoint(Mercure, 8640);
         processMecEnergy(Mercure);
         processAsymEulerNextPoint(MercureA, 8640);
