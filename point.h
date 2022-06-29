@@ -26,6 +26,7 @@ int getTime(struct point*);
 void setPos(struct point*, struct vector*);
 void setSpeed(struct point*, struct vector*);
 void setTime(struct point*, int);
-void deletePoint(struct point**);
+void deletePoint(struct point**); // Also delete potential vectors contained  -> do not double free
+void pointTest();
 
 #endif

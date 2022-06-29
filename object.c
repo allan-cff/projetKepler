@@ -6,6 +6,7 @@ struct object* createEmptyObject(){
         newObject -> name = "undefined";
         newObject -> perihelion = 0;
         newObject -> mass = 0;
+        newObject -> averageMecEnergy = 1;
         newObject -> traj = createEmptyTraj();
     } else {
         printf("***** MALLOC ERROR : cannot create new trajectory *****");
@@ -38,6 +39,22 @@ double getPeri(struct object* obj){
         return 0;
     }
     return obj->perihelion;
+}
+
+
+double getLastEnergy(struct object* obj){
+    if(isObjectEmpty(obj)){
+        return 0;
+    }
+    return obj->lastPointMecEnergy;
+}
+
+
+double getAvEnergy(struct object* obj){
+    if(isObjectEmpty(obj)){
+        return 0;
+    }
+    return obj->averageMecEnergy;
 }
 
 
@@ -99,6 +116,22 @@ void setPeri(struct object* obj, double value){
 }
 
 
+void setLastEnergy(struct object* obj, double value){
+    if(isObjectEmpty(obj)){
+        return;
+    }
+    obj->lastPointMecEnergy = value;
+}
+
+
+void setAvEnergy(struct object* obj, double value){
+    if(isObjectEmpty(obj)){
+        return;
+    }
+    obj->averageMecEnergy = value;
+}
+
+
 void setName(struct object* obj, char* name){
     if(isObjectEmpty(obj)){
         return;
@@ -152,7 +185,7 @@ void processEulerNextPoint(struct object* obj, double deltaTime){
     struct vector* acceleration = vectMultiplication(pointToCenter,GRAVITATIONAL_CONSTANT*parentMass(obj)/pow(norm(pointToCenter), 3));
     struct vector* deltaSpeed = vectMultiplication(acceleration, deltaTime);
     struct vector* nextSpeed = vectAddition(prevSpeed, deltaSpeed);
-    deleteVect(&distance);
+    deleteVect(&distance);  // we delete vectors that are not stocked into other structures and used only here
     deleteVect(&pointToCenter);
     deleteVect(&deltaSpeed);
     deleteVect(&acceleration);
@@ -170,11 +203,26 @@ void processAsymEulerNextPoint(struct object* obj, double deltaTime){
     struct vector* acceleration = vectMultiplication(pointToCenter,GRAVITATIONAL_CONSTANT*parentMass(obj)/pow(norm(pointToCenter), 3));
     struct vector* deltaSpeed = vectMultiplication(acceleration, deltaTime);
     struct vector* nextSpeed = vectAddition(prevSpeed, deltaSpeed);
-    deleteVect(&distance);
+    deleteVect(&distance);   // we delete vectors that are not stocked into other structures and used only here
     deleteVect(&pointToCenter);
     deleteVect(&deltaSpeed);
     deleteVect(&acceleration);
     addFromVect(obj, nextPos, nextSpeed);
+}
+
+
+void processMecEnergy(struct object* obj){
+    struct point* prevPoint = seeLastPointTraj(getTraj(obj));
+    struct vector* prevPos = getPos(prevPoint);
+    struct vector* prevSpeed = getSpeed(prevPoint);
+    struct vector* pointToCenter = vectSubstraction(parentPos(obj), prevPos);
+    double potentialEnergy = GRAVITATIONAL_CONSTANT*parentMass(obj)*getMass(obj)/pow(norm(pointToCenter),2);
+    double kineticEnergy = 0.5*(parentMass(obj)+getMass(obj))*pow(norm(prevSpeed),2);
+    if(trajLen(obj->traj)>1){
+        setAvEnergy(obj, ((potentialEnergy + kineticEnergy)/getLastEnergy(obj)+getAvEnergy(obj)*(trajLen(obj->traj)-2))/(trajLen(obj->traj)-1));
+    }   // n*( E(t+1)/E(t) + Average*(n-1) ) == Average where n is number of points
+    setLastEnergy(obj, potentialEnergy + kineticEnergy);    // save the Mechanical Energy value for this point
+    deleteVect(&pointToCenter);
 }
 
 

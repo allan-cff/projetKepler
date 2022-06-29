@@ -25,9 +25,9 @@ double getZ(struct vector*);
 void setX(struct vector*, double);
 void setY(struct vector*, double);
 void setZ(struct vector*, double);
-struct vector* vectAddition(struct vector*, struct vector*);
-struct vector* vectSubstraction(struct vector*, struct vector*);
-struct vector* vectMultiplication(struct vector*, double);
+struct vector* vectAddition(struct vector*, struct vector*);    // Create a new vect and use malloc -> don't forget to delete
+struct vector* vectSubstraction(struct vector*, struct vector*);// Create a new vect and use malloc -> don't forget to delete
+struct vector* vectMultiplication(struct vector*, double);      // Create a new vect and use malloc -> don't forget to delete
 double norm(struct vector*);
 void deleteVect(struct vector**);
 void vectorTest();
